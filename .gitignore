@@ -1,3 +1,9 @@
-playtime/VARS.py
-__pycache__/
-*.pyc
+scripts/VARS.py
+scripts/__pycache__/
+dist/
+.astro/
+.vscode/
+node_modules/
+.env
+.env.*
+!.env.example

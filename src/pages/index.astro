@@ -1,0 +1,67 @@
+---
+import '../styles/home.css'
+import gamedata from '../data/games.json'
+import SteamGames from '../components/SteamGames.astro';
+import Socials from '../components/social-media/social-media.ts'
+import Layout from '../layouts/Layout.astro';
+---
+<Layout>
+    <div class="user-card">
+        <img 
+            class="user-avatar" 
+            src="https://avatars.githubusercontent.com/u/108094265?v=4" 
+            alt="Аватар пользователя"
+        />
+        <div class="user-info">
+            <div class="user-primary-info">
+                <h2 class="user-name">Wekshion</h2>
+                <p class="user-bio">Lazy ass pseudo DevOps.</p>
+            </div>
+            <div class="user-secondary-info">
+                <div class="secondary-item">
+                    <span class="secondary-label">from:</span> 🇷🇺
+                </div>
+                <div class="secondary-item secondary-gif-slot">
+                    <img class="secondary-gif" src="/gif.gif">
+                </div>
+                <div class="secondary-item">
+                    <span class="secondary-label">pronouns:</span> he/him
+                </div>
+                <div class="secondary-item">
+                    <span class="secondary-label">age:</span> 18
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="social-media">
+        <Socials.Telegram/>
+        <Socials.GitHub/>
+        <Socials.Steam/>
+        <Socials.Spotify/>
+    </div>
+    <div class="about-me">
+        <h3>About me</h3>
+        <p>Hello, I'm Arseny aka Wekshion, unemployed sophomore of Saint Petersburg university (SPbSUT). For now there are no project but this website. But I'm maintaining home server
+            so probably there are will be something soon. Now It is used for hosting game and teamspeak servers.
+        </p>
+    </div>
+    <div class="games-section">
+        <div class="games-header">
+            <h3 class="games-title">Favourite games</h3>
+        </div>
+            <div class="games-grid" id="games-container">
+                {gamedata.map((game) => (
+                    <SteamGames
+                        id={String(game.appid)}
+                        bannerUrl={`https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appid}/header.jpg`}
+                        name={game.name}
+                        playtime={game.playtime}
+                        description={game.description}
+                    />
+                ))}
+        </div>
+        <div class="extra-info">
+            <p>I'm also valorant player (imm 2 111RR peak) but due to my desire to not overthink data scraping process from <a href="https://tracker.gg/valorant/profile/riot/spoiled%20royalty%23wkshi/overview?platform=pc&playlist=competitive" target="_blank" rel="noopener noreferrer">tracker.gg</a>, there are no banner :P</p>
+        </div>
+    </div>
+</Layout>

@@ -1,0 +1,26 @@
+---
+interface Props {
+    bannerUrl: string;
+    name: string;
+    id: string;
+    playtime: number;
+    description: string;
+}
+
+const { bannerUrl, name, id, playtime, description } = Astro.props;
+---
+
+<div class="game-card" id="game-{id}">
+    <img 
+    class="game-banner" 
+    src={bannerUrl} 
+    alt={name}
+    decoding="async" 
+    loading="lazy"
+    />
+    <div class="game-info">
+    <span class="game-title">{name}</span>
+    <span class="game-hours">{playtime} hrs</span>
+    <span class="game-description">{description}</span>
+    </div>
+</div>
