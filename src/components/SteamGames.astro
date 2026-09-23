@@ -1,26 +1,48 @@
----
-interface Props {
-    bannerUrl: string;
+<script>
+  interface Game {
+    appid: number;
     name: string;
     id: string;
     playtime: number;
-    description: string;
-}
+    description?: string;
+  }
 
-const { bannerUrl, name, id, playtime, description } = Astro.props;
----
+  async function loadSteamGames(): Promise<void> {
+    const container = document.getElementById('games-container');
+    if (!container) return;
 
-<div class="game-card" id="game-{id}">
-    <img 
-    class="game-banner" 
-    src={bannerUrl} 
-    alt={name}
-    decoding="async" 
-    loading="lazy"
-    />
-    <div class="game-info">
-    <span class="game-title">{name}</span>
-    <span class="game-hours">{playtime} hrs</span>
-    <span class="game-description">{description}</span>
-    </div>
-</div>
+    try {
+      const response = await fetch('/data/games.json');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const games: Game[] = await response.json();
+
+      container.innerHTML = games.map((game: Game) => {
+        return `
+          <div class="game-card" id="game-${game.id}">
+            <img 
+              class="game-banner" 
+              src="${`https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appid}/header.jpg`}" 
+              alt="${game.name}"
+              decoding="async" 
+              loading="lazy"
+            />
+            <div class="game-info">
+              <span class="game-title">${game.name}</span>
+              <span class="game-hours">${game.playtime} hrs</span>
+              <span class="game-description">${game.description || ''}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    } catch (error) {
+      console.error('Failed to load games data:', error);
+      container.innerHTML = '<span class="error">Err</span>';
+    }
+  }
+
+  loadSteamGames();
+</script>

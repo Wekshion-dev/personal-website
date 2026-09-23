@@ -43,6 +43,6 @@ for i in raw_games:
 
 games.sort(key=lambda x: x.get("playtime", 0), reverse=True)
 
-with open("./src/data/games.json", "w", encoding="utf-8") as f:
+with open("./public/data/games.json", "w", encoding="utf-8") as f:
     json.dump(games, f, ensure_ascii=False, indent=2)
 

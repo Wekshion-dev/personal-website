@@ -1,6 +1,5 @@
 ---
 import '../styles/home.css'
-import gamedata from '../data/games.json'
 import SteamGames from '../components/SteamGames.astro';
 import Socials from '../components/social-media/social-media.ts'
 import Layout from '../layouts/Layout.astro';
@@ -50,16 +49,8 @@ import Layout from '../layouts/Layout.astro';
             <h3 class="games-title">Favourite games</h3>
         </div>
             <div class="games-grid" id="games-container">
-                {gamedata.map((game) => (
-                    <SteamGames
-                        id={String(game.appid)}
-                        bannerUrl={`https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appid}/header.jpg`}
-                        name={game.name}
-                        playtime={game.playtime}
-                        description={game.description}
-                    />
-                ))}
-        </div>
+                <SteamGames />
+            </div>
         <div class="extra-info">
             <p>I'm also valorant player (imm 2 111RR peak) but due to my desire to not overthink data scraping process from <a href="https://tracker.gg/valorant/profile/riot/spoiled%20royalty%23wkshi/overview?platform=pc&playlist=competitive" target="_blank" rel="noopener noreferrer">tracker.gg</a>, there are no banner :P</p>
         </div>
