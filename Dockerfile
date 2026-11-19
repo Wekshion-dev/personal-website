@@ -12,7 +12,7 @@ RUN npm install
 
 COPY . .
 
-RUN python3 scripts/steam-data-fetcher.py
+RUN echo "[]" > public/data/games.json
 RUN npm run build
 
 
