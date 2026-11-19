@@ -19,6 +19,7 @@ RUN npm run build
 FROM python:3-alpine
 
 WORKDIR /app
+RUN mkdir -p /app/public/data
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
