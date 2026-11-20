@@ -29,3 +29,15 @@ body {
     padding: 2rem;
     box-sizing: border-box;
 }
+
+@media (max-width: 540px) {
+    .container {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .container {
+        padding: 1rem;
+    }
+}
