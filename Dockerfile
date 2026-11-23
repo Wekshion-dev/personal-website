@@ -15,7 +15,6 @@ COPY . .
 RUN echo "[]" > public/data/games.json
 RUN npm run build
 
-
 FROM python:3-alpine
 
 WORKDIR /app
@@ -29,6 +28,6 @@ COPY --from=builder /app/scripts /app/scripts
 RUN mkdir -p /app/public
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 CMD ["/entrypoint.sh"]

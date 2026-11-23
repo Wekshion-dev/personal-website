@@ -1,0 +1,28 @@
+{
+  "pc": {
+    "label": "Desktop PC",
+    "online": false,
+    "header": null,
+    "logo": [],
+    "items": [
+      {
+        "key": "Uptime:",
+        "value": "offline"
+      }
+    ],
+    "last_seen": null
+  },
+  "server": {
+    "label": "Server",
+    "online": false,
+    "header": null,
+    "logo": [],
+    "items": [
+      {
+        "key": "Uptime:",
+        "value": "offline"
+      }
+    ],
+    "last_seen": null
+  }
+}

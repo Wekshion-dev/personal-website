@@ -1,0 +1,35 @@
+---
+const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+const isHome = currentPath === '/';
+const isSpecs = currentPath === '/specs';
+---
+
+<nav class="sidebar" aria-label="Main navigation">
+    <a
+        href="/"
+        class:list={['sidebar-link', { active: isHome }]}
+        aria-label="Home"
+        title="Home"
+        aria-current={isHome ? 'page' : undefined}
+    >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 10.5L12 3l9 7.5" />
+            <path d="M5 9.5V20a1 1 0 0 0 1 1h4.5v-6h3v6H18a1 1 0 0 0 1-1V9.5" />
+        </svg>
+    </a>
+
+    <a
+        href="/specs/"
+        class:list={['sidebar-link', { active: isSpecs }]}
+        aria-label="PC Specs"
+        title="Specs"
+        aria-current={isSpecs ? 'page' : undefined}
+    >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2.5" y="4" width="19" height="13" rx="2" />
+            <path d="M8 21h8" />
+            <path d="M12 17v4" />
+        </svg>
+    </a>
+</nav>

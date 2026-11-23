@@ -1,5 +1,12 @@
 ---
-import '../styles/global.css'
+import '../styles/global.css';
+import Sidebar from '../components/Sidebar.astro';
+
+interface Props {
+    title?: string;
+}
+
+const { title = 'Wekshion' } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -8,11 +15,12 @@ import '../styles/global.css'
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wekshion</title>
+    <title>{title}</title>
 </head>
 
 <body>
     <div class="container">
+        <Sidebar />
         <slot />
     </div>
 </body>

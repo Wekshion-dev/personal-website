@@ -1,0 +1,212 @@
+<div class="specs-window-wrapper">
+    <div class="specs-tabs" role="tablist" aria-label="Workstations">
+        <button
+            type="button"
+            class="specs-tab active"
+            role="tab"
+            id="tab-pc"
+            aria-selected="true"
+            aria-controls="specs-window"
+            data-machine="pc"
+        >
+            Desktop PC
+        </button>
+        <button
+            type="button"
+            class="specs-tab"
+            role="tab"
+            id="tab-server"
+            aria-selected="false"
+            aria-controls="specs-window"
+            data-machine="server"
+        >
+            Server
+        </button>
+    </div>
+
+    <div class="specs-window" id="specs-window" role="tabpanel" aria-labelledby="tab-pc">
+        <span class="specs-status-msg">Loading...</span>
+    </div>
+
+    <p class="specs-credit">
+        powered by <a href="https://github.com/Alexander-D-Karpov/netfetch" target="_blank" rel="noopener noreferrer">netfetch</a>
+    </p>
+</div>
+
+<script>
+    type MachineId = 'pc' | 'server';
+
+    interface SpecLine {
+        key: string;
+        value: string;
+    }
+
+    interface MachineSpecs {
+        label: string;
+        online: boolean;
+        header: string | null;
+        logo: string[];
+        items: SpecLine[];
+        last_seen: string | null;
+    }
+
+    type SpecsData = Partial<Record<MachineId, MachineSpecs>>;
+
+    const REFRESH_INTERVAL_MS = 60_000;
+    let activeMachine: MachineId = 'pc';
+    let specsData: SpecsData | null = null;
+    let loadError = false;
+
+    const windowEl = document.getElementById('specs-window');
+    const tabButtons = Array.from(
+        document.querySelectorAll<HTMLButtonElement>('.specs-tab[data-machine]')
+    );
+
+    function isUptimeOffline(line: SpecLine): boolean {
+        const normalizedKey = line.key.trim().toLowerCase().replace(/:$/, '');
+        return normalizedKey === 'uptime' && line.value.trim().toLowerCase() === 'offline';
+    }
+
+    function renderMachine(): void {
+        if (!windowEl) return;
+
+        windowEl.replaceChildren();
+
+        if (loadError) {
+            const msg = document.createElement('span');
+            msg.className = 'specs-status-msg is-offline';
+            msg.textContent = 'Failed to load specs data.';
+            windowEl.appendChild(msg);
+            return;
+        }
+
+        if (!specsData) {
+            const msg = document.createElement('span');
+            msg.className = 'specs-status-msg';
+            msg.textContent = 'Loading...';
+            windowEl.appendChild(msg);
+            return;
+        }
+
+        const machine = specsData[activeMachine];
+        if (!machine) {
+            const msg = document.createElement('span');
+            msg.className = 'specs-status-msg';
+            msg.textContent = 'No data available.';
+            windowEl.appendChild(msg);
+            return;
+        }
+
+        const layout = document.createElement('div');
+        layout.className = 'nf-layout';
+
+        if (machine.logo && machine.logo.length > 0) {
+            const logoEl = document.createElement('pre');
+            logoEl.className = 'nf-logo';
+            logoEl.textContent = machine.logo.join('\n');
+            layout.appendChild(logoEl);
+        }
+
+        const infoEl = document.createElement('div');
+        infoEl.className = 'nf-info';
+
+        if (machine.header) {
+            const headerEl = document.createElement('div');
+            headerEl.className = 'nf-header';
+            headerEl.textContent = machine.header;
+            infoEl.appendChild(headerEl);
+
+            const sepEl = document.createElement('div');
+            sepEl.className = 'nf-separator';
+            sepEl.textContent = '-'.repeat(Math.max(machine.header.length, 13));
+            infoEl.appendChild(sepEl);
+        }
+
+        const items = machine.items && machine.items.length > 0
+            ? machine.items
+            : [{ key: 'Uptime:', value: 'offline' }];
+
+        for (const item of items) {
+            const lineEl = document.createElement('div');
+            lineEl.className = 'nf-line';
+
+            const keyEl = document.createElement('span');
+            keyEl.className = 'nf-key';
+            keyEl.textContent = item.key;
+
+            const valueEl = document.createElement('span');
+            valueEl.className = 'nf-value';
+            if (isUptimeOffline(item)) {
+                valueEl.classList.add('is-offline');
+            }
+            valueEl.textContent = item.value;
+
+            lineEl.appendChild(keyEl);
+            lineEl.appendChild(valueEl);
+            infoEl.appendChild(lineEl);
+        }
+
+        if (!machine.header && (!machine.logo || machine.logo.length === 0)) {
+            const noteEl = document.createElement('span');
+            noteEl.className = 'nf-empty-note';
+            noteEl.textContent = 'No snapshot captured yet.';
+            infoEl.appendChild(noteEl);
+        }
+
+        layout.appendChild(infoEl);
+        windowEl.appendChild(layout);
+    }
+
+    function setActiveTab(machineId: MachineId): void {
+        activeMachine = machineId;
+
+        for (const btn of tabButtons) {
+            const isSelected = btn.dataset.machine === machineId;
+            btn.classList.toggle('active', isSelected);
+            btn.setAttribute('aria-selected', String(isSelected));
+            if (isSelected && windowEl) {
+                windowEl.setAttribute('aria-labelledby', btn.id);
+            }
+        }
+
+        renderMachine();
+    }
+
+    async function fetchSpecs(): Promise<void> {
+        try {
+            const response = await fetch('/data/specs.json', { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            specsData = await response.json();
+            loadError = false;
+        } catch (err) {
+            console.error('Failed to load specs data:', err);
+            if (!specsData) {
+                loadError = true;
+            }
+        }
+        renderMachine();
+    }
+
+    for (const btn of tabButtons) {
+        btn.addEventListener('click', () => {
+            const machineId = btn.dataset.machine as MachineId | undefined;
+            if (machineId === 'pc' || machineId === 'server') {
+                setActiveTab(machineId);
+            }
+        });
+
+        btn.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                const next: MachineId = activeMachine === 'pc' ? 'server' : 'pc';
+                setActiveTab(next);
+                document.getElementById(`tab-${next}`)?.focus();
+            }
+        });
+    }
+
+    fetchSpecs();
+    window.setInterval(fetchSpecs, REFRESH_INTERVAL_MS);
+</script>
