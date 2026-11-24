@@ -7,6 +7,7 @@ from pathlib import Path
 import requests
 
 from VARS import (
+    NETFETCH_LAPTOP_URL,
     NETFETCH_OUTPUT_PATH,
     NETFETCH_PC_URL,
     NETFETCH_SERVER_URL,
@@ -15,6 +16,7 @@ from VARS import (
 
 MACHINES = [
     ("pc", "Desktop PC", NETFETCH_PC_URL),
+    ("laptop", "Laptop", NETFETCH_LAPTOP_URL),
     ("server", "Server", NETFETCH_SERVER_URL),
 ]
 

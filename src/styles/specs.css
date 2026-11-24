@@ -172,9 +172,12 @@
 
 @media (max-width: 440px) {
   .specs-tab {
-    width: 115px;
-    padding: 7px 12px;
-    font-size: 13px;
+    width: auto;
+    flex: 1;
+    min-width: 0;
+    padding: 7px 6px;
+    font-size: 12px;
+    white-space: nowrap;
   }
 
   .nf-line {

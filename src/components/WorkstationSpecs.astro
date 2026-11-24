@@ -15,6 +15,17 @@
             type="button"
             class="specs-tab"
             role="tab"
+            id="tab-laptop"
+            aria-selected="false"
+            aria-controls="specs-window"
+            data-machine="laptop"
+        >
+            Laptop
+        </button>
+        <button
+            type="button"
+            class="specs-tab"
+            role="tab"
             id="tab-server"
             aria-selected="false"
             aria-controls="specs-window"
@@ -34,7 +45,12 @@
 </div>
 
 <script>
-    type MachineId = 'pc' | 'server';
+    const MACHINE_ORDER = ['pc', 'laptop', 'server'] as const;
+    type MachineId = (typeof MACHINE_ORDER)[number];
+
+    function isMachineId(value: string | undefined): value is MachineId {
+        return value !== undefined && (MACHINE_ORDER as readonly string[]).includes(value);
+    }
 
     interface SpecLine {
         key: string;
@@ -191,8 +207,8 @@
 
     for (const btn of tabButtons) {
         btn.addEventListener('click', () => {
-            const machineId = btn.dataset.machine as MachineId | undefined;
-            if (machineId === 'pc' || machineId === 'server') {
+            const machineId = btn.dataset.machine;
+            if (isMachineId(machineId)) {
                 setActiveTab(machineId);
             }
         });
@@ -200,7 +216,9 @@
         btn.addEventListener('keydown', (e: KeyboardEvent) => {
             if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
                 e.preventDefault();
-                const next: MachineId = activeMachine === 'pc' ? 'server' : 'pc';
+                const currentIdx = MACHINE_ORDER.indexOf(activeMachine);
+                const delta = e.key === 'ArrowRight' ? 1 : -1;
+                const next = MACHINE_ORDER[(currentIdx + delta + MACHINE_ORDER.length) % MACHINE_ORDER.length];
                 setActiveTab(next);
                 document.getElementById(`tab-${next}`)?.focus();
             }

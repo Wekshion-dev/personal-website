@@ -12,6 +12,19 @@
     ],
     "last_seen": null
   },
+  "laptop": {
+    "label": "Laptop",
+    "online": false,
+    "header": null,
+    "logo": [],
+    "items": [
+      {
+        "key": "Uptime:",
+        "value": "offline"
+      }
+    ],
+    "last_seen": null
+  },
   "server": {
     "label": "Server",
     "online": false,
