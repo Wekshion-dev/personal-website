@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
@@ -125,15 +126,35 @@ class NetfetchHTMLParser(HTMLParser):
         return cleaned
 
 
+GPU_BRACKET_RE = re.compile(r"\[([^\]]+)\]")
+GPU_IGNORED_TAGS = {"discrete", "integrated", "unknown"}
+
+
+def clean_gpu_value(val: str) -> str:
+    for match in GPU_BRACKET_RE.findall(val):
+        inside = match.strip()
+        if inside and inside.lower() not in GPU_IGNORED_TAGS:
+            return inside
+    return val
+
+
 def parse_netfetch_html(html: str) -> dict:
     parser = NetfetchHTMLParser()
     parser.feed(html)
     parser.close()
 
+    items = []
+    for item in parser.items:
+        key = item["key"]
+        val = item["value"]
+        if key.lower().startswith("gpu"):
+            val = clean_gpu_value(val)
+        items.append({"key": key, "value": val})
+
     return {
         "header": parser.header,
         "logo": parser.get_logo_lines(),
-        "items": parser.items,
+        "items": items,
     }
 
 
