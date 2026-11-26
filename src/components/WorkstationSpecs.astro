@@ -116,27 +116,29 @@
         const layout = document.createElement('div');
         layout.className = 'nf-layout';
 
+        const logoSlot = document.createElement('div');
+        logoSlot.className = 'nf-logo-slot';
         if (machine.logo && machine.logo.length > 0) {
             const logoEl = document.createElement('pre');
             logoEl.className = 'nf-logo';
             logoEl.textContent = machine.logo.join('\n');
-            layout.appendChild(logoEl);
+            logoSlot.appendChild(logoEl);
         }
+        layout.appendChild(logoSlot);
 
         const infoEl = document.createElement('div');
         infoEl.className = 'nf-info';
 
-        if (machine.header) {
-            const headerEl = document.createElement('div');
-            headerEl.className = 'nf-header';
-            headerEl.textContent = machine.header;
-            infoEl.appendChild(headerEl);
+        const headerText = machine.header || machine.label;
+        const headerEl = document.createElement('div');
+        headerEl.className = 'nf-header';
+        headerEl.textContent = headerText;
+        infoEl.appendChild(headerEl);
 
-            const sepEl = document.createElement('div');
-            sepEl.className = 'nf-separator';
-            sepEl.textContent = '-'.repeat(Math.max(machine.header.length, 13));
-            infoEl.appendChild(sepEl);
-        }
+        const sepEl = document.createElement('div');
+        sepEl.className = 'nf-separator';
+        sepEl.textContent = '-'.repeat(Math.max(headerText.length, 13));
+        infoEl.appendChild(sepEl);
 
         const items = machine.items && machine.items.length > 0
             ? machine.items

@@ -105,10 +105,15 @@ class NetfetchHTMLParser(HTMLParser):
             return []
 
         raw_lines = raw.split("\n")
+        subsequent_non_empty = [line for line in raw_lines[1:] if line.strip() != ""]
+        strip_template_indent = bool(subsequent_non_empty) and all(
+            line.startswith("        ") for line in subsequent_non_empty
+        )
+
         cleaned: list[str] = []
         for idx, line in enumerate(raw_lines):
-            # netfetch's neofetch.html indents lines after the first with 8 spaces
-            if idx > 0 and line.startswith("        "):
+            # netfetch's neofetch.html indents every line after the first with 8 spaces
+            if idx > 0 and strip_template_indent and line.startswith("        "):
                 line = line[8:]
             cleaned.append(line.rstrip())
 
